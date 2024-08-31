@@ -1,4 +1,3 @@
-
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -7,7 +6,7 @@ import { initSWEAgent } from './agents/swe';
 import { GOAL } from './prompts';
 
 async function main() {
-  /**Run the agent.**/
+  /** Run the agent. **/
   const { assistantThread, llm, tools, composioToolset } = await initSWEAgent();
   const { repo, issue } = await fromGithub(composioToolset);
 
@@ -31,11 +30,10 @@ async function main() {
     instructions: `Repo is: ${repo} and your goal is to ${issue}`,
     tool_choice: "required"
   });
- 
+
   await composioToolset.waitAndHandleAssistantToolCalls(llm as any, stream, assistantThread, "default");
 
-  const response = await composioToolset.executeAction("filetool_git_patch", {
-  });
+  const response = await composioToolset.executeAction("filetool_git_patch", {});
 
   if (response.patch && response.patch?.length > 0) {
     console.log('=== Generated Patch ===\n' + response.patch, response);
@@ -55,7 +53,7 @@ async function main() {
       head: branchName,
       base: "master",
       title: `SWE: ${issue}`
-    })
+    });
 
     console.log("Done! The PR has been created for this issue in " + repo);
   } else {
